@@ -53,6 +53,7 @@ app.get("/hello", (req, res) => {
   res.json({ status: res.status(200) });
 });
 
+// add new user
 app.post("/api/exercise/new-user", (req, res) => {
   console.log(`username: ${req.body.username}`);
   User.findOne({ user: req.body.username }, (err, user) => {
@@ -76,6 +77,7 @@ app.post("/api/exercise/new-user", (req, res) => {
   });
 });
 
+// post new exercise log
 app.post("/api/exercise/add", (req, res) => {
   const { userId, description, duration, date } = req.body;
   console.log(
@@ -112,6 +114,35 @@ app.post("/api/exercise/add", (req, res) => {
       // res.json(err);
     }
   });
+});
+
+// retrieve logs of users exercises
+app.get("/api/exercise/log", (req, res) => {
+  const { userId, from, to, limit } = req.query;
+  console.log(`${userId} ${from} ${to} ${limit}`);
+  console.log(req.query);
+  console.log("iso: __" + new Date(from));
+  console.log("iso: __" + new Date(to));
+
+  let query = {};
+
+  userId && (query.user = userId);
+  (from || to) && (query.date = {});
+  from && (query.date.$gte = new Date(from));
+  to && (query.date.$lte = new Date(to));
+  if (limit) {
+    Exercise.find(query)
+      .limit(parseInt(limit))
+      .exec((err, exercises) => {
+        err && console.log(err);
+        res.json(exercises);
+      });
+  } else {
+    Exercise.find(query, (err, exercises) => {
+      err && console.log(err);
+      res.json(exercises);
+    });
+  }
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
