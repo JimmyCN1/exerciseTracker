@@ -116,6 +116,17 @@ app.post("/api/exercise/add", (req, res) => {
   });
 });
 
+// retrieve users
+app.get("/api/users", (req, res) => {
+  User.find({}, (err, users) => {
+    if (err) {
+      res.json(err);
+    } else {
+      res.json(users);
+    }
+  });
+});
+
 // retrieve logs of users exercises
 app.get("/api/exercise/log", (req, res) => {
   const { userId, from, to, limit } = req.query;
