@@ -23,11 +23,6 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-// Not found middleware
-// app.use((req, res, next) => {
-//   return next({ status: 404, message: "not found" });
-// });
-
 // Error Handling middleware
 app.use((err, req, res, next) => {
   let errCode, errMessage;
@@ -111,7 +106,6 @@ app.post("/api/exercise/add", (req, res) => {
     } else if (err) {
       console.log(err);
       res.json(err);
-      // res.json(err);
     }
   });
 });
@@ -135,6 +129,7 @@ app.get("/api/exercise/log", (req, res) => {
   console.log("iso: __" + new Date(from));
   console.log("iso: __" + new Date(to));
 
+  //build query object
   let query = {};
 
   userId && (query.user = userId);
