@@ -81,9 +81,37 @@ app.post("/api/exercise/add", (req, res) => {
   console.log(
     `user: ${userId} descrip: ${description} duration: ${duration} date: ${date}`
   );
-  res.send(
-    `user: ${userId} descrip: ${description} duration: ${duration} date: ${date}`
-  );
+  const newDate = funcDate => {
+    return !funcDate ? new Date() : new Date(funcDate);
+  };
+  console.log("date: __" + date);
+  console.log(newDate(date));
+  // console.log(new Date(date));
+  User.findOne({ user: userId }, (err, user) => {
+    if (user) {
+      const exercise = new Exercise({
+        _id: new mongoose.Types.ObjectId(),
+        user: userId,
+        description,
+        duration,
+        date: newDate(date)
+      });
+      exercise.save(err => {
+        if (err) {
+          console.log(err);
+          res.json(err);
+        } else {
+          res.json(exercise);
+        }
+      });
+    } else if (!user) {
+      res.json({ error: "there is no user with this username" });
+    } else if (err) {
+      console.log(err);
+      res.json(err);
+      // res.json(err);
+    }
+  });
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
